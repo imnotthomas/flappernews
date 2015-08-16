@@ -42,5 +42,13 @@ router.param('post', function(req, res, next, id) {
 router.get('/posts/:post', function(req, res) {
     res.json(req.post);
 });
+
+router.put('/posts/:post/upvote', function(req, res, next) {
+    req.post.upvote(function(err, post) {
+	if(err) { return next(err); }
+
+	res.json(post);
+    });
+});
 	     
 module.exports = router;
