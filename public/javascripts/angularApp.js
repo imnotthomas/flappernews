@@ -3,20 +3,20 @@ var app = angular.module('flapperNews', ['ui.router']);
 app.factory('posts', ['$http', function($http) {
     // service body
     var o = {
-	posts: [
-	    {title: 'post 1', upvotes: 5, comments: []},
-	    {title: 'post 2', upvotes: 2, comments: []},
-	    {title: 'post 3', upvotes: 15, comments: []},
-	    {title: 'post 4', upvotes: 9, comments: []},
-	    {title: 'post 5', upvotes: 4, comments: []},
-	    {title: 'post 6', upvotes: 1, comments: []}
-	]
+	posts: []
     };
 
     o.getAll = function() {
 	return $http.get('/posts')
 	    .success(function(data) {
 		angular.copy(data, o.posts);
+	    });
+    };
+
+    o.create = function(post) {
+	return $http.post('/posts', post)
+	    .success(function(data) {
+		o.posts.push(data);
 	    });
     };
     
@@ -32,16 +32,10 @@ app.controller('MainCtrl', [
 
 	$scope.addPost = function() {
 	    if(!$scope.title || $scope.title === '') {return; }
-	    $scope.posts.push({
+	    posts.create({
 		title: $scope.title,
 		link: $scope.link,
-		upvotes: 0,
-		comments: [
-		    {author: 'Joe', body: 'Cool post!', upvotes: 0},
-		    {author: 'Bob', body: 'Great idea but everything is wrong!', upvotes: 0}
-		]
 	    });
-
 	    $scope.title = '';
 	    $scope.link = '';
 	}
