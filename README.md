@@ -1,2 +1,1 @@
-# flappernews
-MEAN tutorial from thinkster.io
+Starting over with V2
