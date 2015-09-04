@@ -7,7 +7,7 @@
   </head>
   <body ng-app="flapperNews" ng-controller="MainCtrl">
     {{test}}
-
+    <div ng-click="addPost()">Post</div>
     <div ng-repeat="post in posts">
       {{post.title}} - upvotes: {{post.upvotes}}
     </div>
