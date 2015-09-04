@@ -12,6 +12,7 @@
       <button type="submit">Post</button>
     </form>
     <div ng-repeat="post in posts">
+      <span ng-click="incrementUpvote(post)">^</span>
       {{post.title}} - upvotes: {{post.upvotes}}
     </div>
   </body>
