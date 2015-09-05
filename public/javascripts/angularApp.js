@@ -10,7 +10,12 @@ var mainCtrl = function($scope, posts) {
 	
 	$scope.posts.push({title: $scope.title,
 			   link: $scope.link,
-			   upvotes: 0});
+			   upvotes: 0,
+			   comments: [
+			       {author: 'Thomas', body: 'Cool post!', upvotes: 0},
+			       {author: 'Lauren', body: 'Great idea!', upvotes: 0}
+			   ]
+			  });
 	$scope.title = '';
 	$scope.link = '';
     };
@@ -19,6 +24,10 @@ var mainCtrl = function($scope, posts) {
 	post.upvotes += 1;
     };
 }    
+
+var postsCtrl = function($scope, $stateParams, posts){
+    $scope.post = posts.posts[$stateParams.id];
+};
 
 var postFactory = function(){
     var o = {
@@ -38,9 +47,12 @@ angular.module('flapperNews', ['ui.router'])
     .controller('MainCtrl',
 		["$scope",
 		 "posts",
-		 mainCtrl
-		]
-	       )
+		 mainCtrl])
+    .controller('PostsCtrl',
+		['$scope',
+		'$stateParams',
+		'posts',
+		 postsCtrl])
     .config([
 	'$stateProvider',
 	'$urlRouterProvider',
@@ -50,6 +62,11 @@ angular.module('flapperNews', ['ui.router'])
 		    url: '/home',
 		    templateUrl: '/home.html',
 		    controller: 'MainCtrl'
+		})
+		.state('posts', {
+		    url: '/posts/{id}',
+		    templateUrl: '/posts.html',
+		    controller: 'PostsCtrl'
 		});
 
 	    $urlRouterProvider.otherwise('home');
