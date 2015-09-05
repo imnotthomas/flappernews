@@ -33,11 +33,25 @@ var postFactory = function(){
     return o;
 };
 
-angular.module('flapperNews', [])
+angular.module('flapperNews', ['ui.router'])
     .factory('posts',[postFactory])
     .controller('MainCtrl',
 		["$scope",
 		 "posts",
 		 mainCtrl
 		]
-    );
+	       )
+    .config([
+	'$stateProvider',
+	'$urlRouterProvider',
+	function($stateProvider, $urlRouterProvider) {
+	    $stateProvider
+		.state('home', {
+		    url: '/home',
+		    templateUrl: '/home.html',
+		    controller: 'MainCtrl'
+		});
+
+	    $urlRouterProvider.otherwise('home');
+	}
+    ]);
