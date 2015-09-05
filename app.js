@@ -8,7 +8,7 @@ var mongoose = require('mongoose');
 require('./models/Posts');
 require('./models/Comments');
 
-mongoose.connect('mongodb://localhost/flappernews', function(err) {
+mongoose.connect('mongodb://localhost:27017/flappernews', function(err) {
     if(err) {
         console.log('connection error', err);
     } else {
