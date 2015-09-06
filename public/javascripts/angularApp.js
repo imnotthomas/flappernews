@@ -39,21 +39,22 @@ var postsCtrl = function($scope, $stateParams, posts){
     };
 };
 
-var postFactory = function(){
+var postFactory = function($http){
     var o = {
-	posts: [
-	    {title: "post 1", upvotes: 1},
-	    {title: "post 2", upvotes: 2},
-	    {title: "post 3", upvotes: 3},
-	    {title: "post 4", upvotes: 4},
-	    {title: "post 5", upvotes: 5},
-	    {title: "post 6", upvotes: 6}]
+	posts: []
     };
+
+    o.getAll = function() {
+	return $http.get('/posts').success(function(data) {
+	    angular.copy(data, o.posts);
+	});
+    };
+    
     return o;
 };
 
 angular.module('flapperNews', ['ui.router'])
-    .factory('posts',[postFactory])
+    .factory('posts',['$http', postFactory])
     .controller('MainCtrl',
 		["$scope",
 		 "posts",
@@ -71,7 +72,12 @@ angular.module('flapperNews', ['ui.router'])
 		.state('home', {
 		    url: '/home',
 		    templateUrl: '/home.html',
-		    controller: 'MainCtrl'
+		    controller: 'MainCtrl',
+		    resolve: {
+			postPromise: ['posts', function(posts){
+			    return posts.getAll();
+			}]
+		    }
 		})
 		.state('posts', {
 		    url: '/posts/{id}',
