@@ -18,7 +18,7 @@ var mainCtrl = function($scope, posts) {
     };
 
     $scope.incrementUpvote = function(post) {
-	post.upvotes += 1;
+	posts.upvote(post);
     };
 }    
 
@@ -51,6 +51,13 @@ var postFactory = function($http){
 	return $http.post('/posts', post).success(function(data) {
 	    o.posts.push(data);
 	});
+    };
+
+    o.upvote = function(post){
+	return $http.put('/posts/'+ post._id + '/upvote')
+	    .success(function(data) {
+		post.upvotes += 1;
+	    });	
     };
     
     return o;
