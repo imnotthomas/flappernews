@@ -7,15 +7,12 @@ var mainCtrl = function($scope, posts) {
 	    console.log('not allowed');
 	    return;
 	}
+
+	posts.create({
+	    title: $scope.title,
+	    link:  $scope.link
+	});
 	
-	$scope.posts.push({title: $scope.title,
-			   link: $scope.link,
-			   upvotes: 0,
-			   comments: [
-			       {author: 'Thomas', body: 'Cool post!', upvotes: 0},
-			       {author: 'Lauren', body: 'Great idea!', upvotes: 0}
-			   ]
-			  });
 	$scope.title = '';
 	$scope.link = '';
     };
@@ -47,6 +44,12 @@ var postFactory = function($http){
     o.getAll = function() {
 	return $http.get('/posts').success(function(data) {
 	    angular.copy(data, o.posts);
+	});
+    };
+
+    o.create = function(post) {
+	return $http.post('/posts', post).success(function(data) {
+	    o.posts.push(data);
 	});
     };
     
