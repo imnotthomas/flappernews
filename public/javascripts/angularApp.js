@@ -20,7 +20,7 @@ var mainCtrl = function($scope, posts) {
     $scope.incrementUpvote = function(post) {
 	posts.upvote(post);
     };
-};
+}
 
 var postsCtrl = function($scope, $stateParams, posts, post){
     $scope.post = post;
