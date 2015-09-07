@@ -8,7 +8,7 @@ var Post = mongoose.model('Post');
 var Comment = mongoose.model('Comment');
 var User = mongoose.model('User');
 
-var auth = jwt({secret: 'SECRET', userProperty: 'payload'})
+var auth = jwt({secret: 'SECRET', userProperty: 'payload'});
 
 router.param('post', function(req, res, next, id) {
   var query = Post.findById(id);

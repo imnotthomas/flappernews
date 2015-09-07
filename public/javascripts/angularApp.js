@@ -1,28 +1,3 @@
-<<<<<<< HEAD
-var mainCtrl = function($scope, posts) {
-    $scope.test = 'Hello world!';
-    $scope.posts = posts.posts
-
-    $scope.addPost = function(){
-	if(!$scope.title || $scope.title === ''){
-	    console.log('not allowed');
-	    return;
-	}
-
-	posts.create({
-	    title: $scope.title,
-	    link:  $scope.link
-	});
-	
-	$scope.title = '';
-	$scope.link = '';
-    };
-
-    $scope.incrementUpvote = function(post) {
-	posts.upvote(post);
-    };
-}
-=======
 var mainCtrl = function($scope, posts, auth) {
   $scope.test = 'Hello world!';
   $scope.posts = posts.posts
@@ -48,7 +23,6 @@ var mainCtrl = function($scope, posts, auth) {
 
   $scope.isLoggedIn = auth.isLoggedIn;
 }    
->>>>>>> v0.0.2
 
 var postsCtrl = function($scope, $stateParams, posts, post, auth){
   $scope.post = post;
@@ -122,7 +96,7 @@ var postFactory = function($http, auth){
     return $http.put('/posts/'+ post._id + '/upvote', null ,{
       headers: { Authorization: 'Bearer '+ auth.getToken() }
     }).success(function(data) {
-	post.upvotes += 1;
+      post.upvotes += 1;
     });
   };
 
@@ -142,8 +116,8 @@ var postFactory = function($http, auth){
     return $http.put('/posts/' + post._id + '/comments/' + comment._id + '/upvote', null, {
       headers: { Authorization: 'Bearer '+ auth.getToken() }
     }).success(function(data) {
-	comment.upvotes += 1;
-      });
+      comment.upvotes += 1;
+    });
   };
   
   return o;
@@ -221,9 +195,9 @@ angular.module('flapperNews', ['ui.router'])
                'auth',
                authCtrl])
   .controller('NavCtrl',
-             ['$scope',
-              'auth',
-              navCtrl])
+              ['$scope',
+               'auth',
+               navCtrl])
   .config([
     '$stateProvider',
     '$urlRouterProvider',
