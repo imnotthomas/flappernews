@@ -5,8 +5,13 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
+var passport = require('passport');
+
 require('./models/Posts');
 require('./models/Comments');
+require('./models/Users');
+
+require('./config/passport');
 
 //mongoose.connect('mongodb://localhost/news');
 mongoose.connect('mongodb://ec2-52-25-244-141.us-west-2.compute.amazonaws.com:27017/news');
@@ -27,6 +32,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(passport.initialize());
 
 app.use('/', routes);
 app.use('/users', users);
