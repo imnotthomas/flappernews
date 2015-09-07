@@ -63,6 +63,12 @@ var authCtrl = function($scope, $state, auth){
   };
 };
 
+var navCtrl = function($scope, auth){
+  $scope.isLoggedIn = auth.isLoggedIn;
+  $scope.currentUser = auth.currentUser;
+  $scope.logOut = auth.logOut;
+};
+
 var postFactory = function($http){
   var o = {
     posts: []
@@ -171,11 +177,15 @@ angular.module('flapperNews', ['ui.router'])
 	       'posts',
 	       'post',
 	       postsCtrl])
-  .controller('AuthCtrl', [
-    '$scope',
-    '$state',
-    'auth',
-    authCtrl])
+  .controller('AuthCtrl', 
+              ['$scope',
+               '$state',
+               'auth',
+               authCtrl])
+  .controller('NavCtrl',
+             ['$scope',
+              'auth',
+              navCtrl])
   .config([
     '$stateProvider',
     '$urlRouterProvider',
