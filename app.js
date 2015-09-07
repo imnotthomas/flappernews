@@ -14,7 +14,7 @@ require('./models/Users');
 require('./config/passport');
 
 //mongoose.connect('mongodb://localhost/news');
-mongoose.connect('mongodb://ec2-52-25-244-141.us-west-2.compute.amazonaws.com:27017/news');
+mongoose.connect('mongodb://ec2-52-25-244-141.us-west-2.compute.amazonaws.com:27017/testdb');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');

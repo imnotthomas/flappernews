@@ -51,6 +51,7 @@ router.post('/posts', auth, function(req, res, next) {
   console.log('post to /posts. req.body = ' + req.body.title);
   var post = new Post(req.body);
   post.author = req.payload.username;
+  post.user = req.payload._id;
 
   post.save(function(err, post) {
     if(err) { return next(err); }
@@ -62,8 +63,12 @@ router.post('/posts', auth, function(req, res, next) {
 router.get('/posts/:post', function(req, res) {
   req.post.populate('comments', function(err, post) {
     if (err) {return next(err); }
-    
-    res.json(req.post);
+      req.post.populate('user', function(err, post){
+        if(err) {return next(err);}
+
+        console.log(req.post);
+        res.json(req.post);
+      });
   });
 });
 
@@ -136,6 +141,18 @@ router.post('/login', function(req, res, next){
       return res.status(401).json(info);
     }
   })(req, res, next);
+});
+
+router.get('/users', function(req, res, next){
+  var query = User.find();
+
+  query.select('username');
+
+  query.exec(function(err, users){
+    if(err) {return next(err); }
+
+    res.json(users);
+  }); 
 });
 
 module.exports = router;
