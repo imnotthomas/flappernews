@@ -4,6 +4,8 @@ var PostSchema = new mongoose.Schema({
   title: String,
   link: String,
   author: String,
+  numComments: { type: Number, default: 0},
+  dateCreated: { type: Date, default: Date.now },
   user: { type: mongoose.Schema.Types.ObjectId, ref: 'User'},
   upvotes: {type: Number, default: 0},
   comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }]
