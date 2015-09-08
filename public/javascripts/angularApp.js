@@ -24,6 +24,12 @@ var mainCtrl = function($scope, posts, auth) {
   $scope.isLoggedIn = auth.isLoggedIn;
 }    
 
+var usersCtrl = function($scope, users, auth){
+  $scope.test = "hello";
+  $scope.users = users.users;
+  
+};
+
 var postsCtrl = function($scope, $stateParams, posts, post, auth){
   $scope.post = post;
 
@@ -71,6 +77,20 @@ var navCtrl = function($scope, auth){
   $scope.isLoggedIn = auth.isLoggedIn;
   $scope.currentUser = auth.currentUser;
   $scope.logOut = auth.logOut;
+};
+
+var userFactory = function($http, auth){
+  var u = {
+    users: []
+  };
+
+  u.getAll = function(){
+    return $http.get('/users').success(function(data){
+      angular.copy(data, u.users);
+    });
+  };
+
+  return u;
 };
 
 var postFactory = function($http, auth){
@@ -177,11 +197,17 @@ var authFactory = function($http, $window){
 angular.module('flapperNews', ['ui.router'])
   .factory('posts',['$http', 'auth', postFactory])
   .factory('auth', ['$http', '$window', authFactory])
+  .factory('users', ['$http', 'auth', userFactory])
   .controller('MainCtrl',
 	      ["$scope",
 	       "posts",
                "auth",
 	       mainCtrl])
+  .controller('UsersCtrl',
+              ['$scope',
+               'users',
+               'auth',
+               usersCtrl])
   .controller('PostsCtrl',
 	      ['$scope',
 	       '$stateParams',
@@ -242,6 +268,16 @@ angular.module('flapperNews', ['ui.router'])
               $state.go('home');
             }
           }]
+        })
+        .state('users', {
+          url: '/users',
+          templateUrl: "/users.html",
+          controller: 'UsersCtrl',
+          resolve: {
+            userPromis: ['users', function(users){
+              return users.getAll();
+            }]
+          }
         });
 
       $urlRouterProvider.otherwise('home');

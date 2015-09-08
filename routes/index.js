@@ -184,7 +184,7 @@ router.post('/login', function(req, res, next){
 router.get('/users', function(req, res, next){
   var query = User.find();
 
-  query.select('username numPosts numComments posts');
+  query.select('username numPosts numComments posts comments');
 
   query.exec(function(err, users){
     if(err) {return next(err); }
