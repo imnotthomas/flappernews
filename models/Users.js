@@ -8,7 +8,8 @@ var UserSchema = new mongoose.Schema({
   salt: String,
   numPosts: {type: Number, default: 0},
   numComments: {type: Number, default: 0},
-  posts: [{type: mongoose.Schema.Types.ObjectId, ref: 'Post'}]
+  posts: [{type: mongoose.Schema.Types.ObjectId, ref: 'Post'}],
+  comments: [{type: mongoose.Schema.Types.ObjectId, ref: 'Comment'}]
 });
 
 UserSchema.methods.setPassword = function(password) {

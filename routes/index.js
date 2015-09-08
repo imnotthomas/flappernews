@@ -37,7 +37,7 @@ router.param('comment', function(req, res, next, id) {
 router.param('user', function(req, res, next, id){
   var query = User.findById(id);
 
-  query.select("username numPosts numComments posts");
+  query.select("username numPosts numComments posts comments");
 
   query.exec(function(err, user){
     if(err) { return next(err); }
@@ -123,7 +123,17 @@ router.post('/posts/:post/comments', auth, function(req, res, next) {
     req.post.comments.push(comment);
     req.post.save(function(err, post) {
       if(err) { return next(err); }
+      User.findById(req.payload._id, function(err, user){
+        if(err) { return next(err); }
 
+        user.numComments += 1;
+        user.comments.push(comment._id);
+        user.save(function(err){
+          if(err) { return next(err); }
+          console.log('saved user');
+        });
+      });
+      
       res.json(comment);
     });
   });
@@ -184,11 +194,32 @@ router.get('/users', function(req, res, next){
 });
 
 router.get('/users/:user', function(req, res, next){
-  req.user.populate('posts', function(err, user){
-    if(err) { return next(err); }
+  var comments = req.user.comments;
+  var posts = req.user.posts;
 
-    res.json(user);
-  });
+  var hasComments = !(comments === undefined || comments.length === 0);
+  var hasPosts = !(posts === undefined || posts.length === 0);
+  var hasBoth = (hasComments && hasPosts);
+
+  if(hasBoth){
+    req.user.populate('posts', function(err, user){
+      if(err) { return next(err); }
+      req.user.populate('comments', function(err, user){
+        if(err) { return next(err); }
+
+        res.json(user);})
+    });
+  } else if (hasPosts){
+    req.user.populate('posts', function(err, user){
+      if(err) { return next(err); }
+
+      res.json(user);})
+  } else {
+    req.user.populate('comments', function(err, user){
+      if(err) { return next(err); }
+
+      res.json(user);})
+  }
 });
 
 module.exports = router;
