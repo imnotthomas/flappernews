@@ -30,7 +30,21 @@ router.param('comment', function(req, res, next, id) {
     if(!comment) {return next(new Error('can\'t find comment'));}
 
     req.comment = comment;
-    return next()
+    return next();
+  });
+});
+
+router.param('user', function(req, res, next, id){
+  var query = User.findById(id);
+
+  query.select("username numPosts numComments posts");
+
+  query.exec(function(err, user){
+    if(err) { return next(err); }
+    if(!user) { return next(new Error('can\'t find user')); }
+
+    req.user = user;
+    return next();
   });
 });
 
@@ -61,6 +75,7 @@ router.post('/posts', auth, function(req, res, next) {
     User.findById(req.payload._id, function(err, user){
       if (err) {return next(err);}
 
+      user.numPosts += 1;
       user.posts.push(post._id);
       user.save(function(err){
         if(err) {return next(err);}
@@ -159,13 +174,21 @@ router.post('/login', function(req, res, next){
 router.get('/users', function(req, res, next){
   var query = User.find();
 
-  query.select('username');
+  query.select('username numPosts numComments posts');
 
   query.exec(function(err, users){
     if(err) {return next(err); }
 
     res.json(users);
   }); 
+});
+
+router.get('/users/:user', function(req, res, next){
+  req.user.populate('posts', function(err, user){
+    if(err) { return next(err); }
+
+    res.json(user);
+  });
 });
 
 module.exports = router;
