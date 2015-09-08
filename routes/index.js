@@ -58,8 +58,17 @@ router.post('/posts', auth, function(req, res, next) {
 
   post.save(function(err, post) {
     if(err) { return next(err); }
+    User.findById(req.payload._id, function(err, user){
+      if (err) {return next(err);}
 
+      user.posts.push(post._id);
+      user.save(function(err){
+        if(err) {return next(err);}
+        console.log('saved user');
+      });
+    });
     res.json(post);
+    
   });
 });
 
