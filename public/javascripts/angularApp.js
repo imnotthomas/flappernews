@@ -22,11 +22,15 @@ var mainCtrl = function($scope, posts, auth) {
   };
 
   $scope.isLoggedIn = auth.isLoggedIn;
+  $scope.currentUserId = auth.currentUserId;
 }    
 
-var usersCtrl = function($scope, users, auth){
+var usersCtrl = function($scope, $stateParams, users, user, auth){
   $scope.test = "hello";
   $scope.users = users.users;
+
+  $scope.user = user;
+  $scope.userId = auth.currentUserId;
   
 };
 
@@ -76,6 +80,7 @@ var authCtrl = function($scope, $state, auth){
 var navCtrl = function($scope, auth){
   $scope.isLoggedIn = auth.isLoggedIn;
   $scope.currentUser = auth.currentUser;
+  $scope.currentUserId = auth.currentUserId;
   $scope.logOut = auth.logOut;
 };
 
@@ -87,6 +92,12 @@ var userFactory = function($http, auth){
   u.getAll = function(){
     return $http.get('/users').success(function(data){
       angular.copy(data, u.users);
+    });
+  };
+
+  u.get = function(id){
+    return $http.get('/users/' + id).then(function(res){
+      return res.data;
     });
   };
 
@@ -175,6 +186,15 @@ var authFactory = function($http, $window){
     }
   };
 
+  auth.currentUserId = function(){
+    if(auth.isLoggedIn()){
+      var token = auth.getToken();
+      var payload = JSON.parse($window.atob(token.split('.')[1]));
+
+      return payload._id;
+    }
+  };
+  
   auth.register = function(user){
     return $http.post('/register', user).success(function(data){
       auth.saveToken(data.token);
@@ -205,7 +225,9 @@ angular.module('flapperNews', ['ui.router'])
 	       mainCtrl])
   .controller('UsersCtrl',
               ['$scope',
+               '$stateParams',
                'users',
+               'user',
                'auth',
                usersCtrl])
   .controller('PostsCtrl',
@@ -269,13 +291,16 @@ angular.module('flapperNews', ['ui.router'])
             }
           }]
         })
-        .state('users', {
-          url: '/users',
+        .state('users}', {
+          url: '/users/{id}',
           templateUrl: "/users.html",
           controller: 'UsersCtrl',
           resolve: {
-            userPromis: ['users', function(users){
+            userPromise: ['users', function(users){
               return users.getAll();
+            }],
+            user: ['$stateParams', 'users', function($stateParams, users){
+              return users.get($stateParams.id);
             }]
           }
         });

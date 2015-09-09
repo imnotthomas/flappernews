@@ -26,7 +26,7 @@
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
           <ul class="nav navbar-nav navbar-right">
-            <li ng-show="isLoggedIn()"><a>{{ currentUser() }}</a></li>
+            <li ng-show="isLoggedIn()"><a href="/#/users/{{currentUserId()}}">{{ currentUser() }}</a></li>
             <li ng-show="isLoggedIn()"><a href="" ng-click="logOut()">Log Out</a></li>
             <li ng-hide="isLoggedIn()"><a href="/#/login">Log In</a></li>
             <li ng-hide="isLoggedIn()"><a href="/#/register">Register</a></li>
@@ -72,7 +72,7 @@
 	<a ng-show="post.link" href="{{post.link}}">{{post.title}} |</a>
 	<span ng-hide="post.link">{{post.title}}</span>
         <span ng-show="post.author">
-          posted by <a>{{post.author}}</a> |
+          posted by <a href="/#/users/{{post.user}}">{{post.author}}</a> |
         </span>
 	upvotes: {{post.upvotes}} |
 	<span> <a href="#/posts/{{post._id}}">{{post.numComments}} Comments</a></span>
@@ -92,7 +92,7 @@
       </div>
 
       <div ng-repeat="comment in post.comments">
-	<p>
+	<p id="{{comment._id}}">
 	  <i ng-click="incrementUpvote(comment)" class="fa fa-thumbs-o-up"></i>
 	  <strong>{{comment.author}}</strong> {{comment.upvotes}} points
 	</p>
@@ -177,8 +177,24 @@
     </script>
 
     <script type="text/ng-template" id="/users.html">
-      <h1>hello users page</h1>
-      <div ng-repeat="user in users">{{user}}</div>
+      <h1>hello {{user.username}}</h1>
+      <p>You have</p>
+      <p>{{user.numPosts}} Posts</p>
+      <p>{{user.numComments}} Comments</p>
+      <div class="row">
+        <div class="col-md-6 col-sm-12">
+          <h2>Posts</h2>
+          <div ng-repeat="post in user.posts">
+            <a href="/#/posts/{{post._id}}">{{post.title}}</a> | {{post.numComments}} Comments | {{post.upvotes}} points
+          </div>
+        </div>
+        <div class="col-md-6 col-sm-12">
+          <h2>Comments</h2>
+          <div ng-repeat="comment in user.comments">
+            <a href="/#/posts/{{comment.post}}#{{comment._id}}">{{comment.body}}</a> | {{comment.upvotes}} points
+          </div>
+        </div>
+      </div>
     </script>
 
     <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
